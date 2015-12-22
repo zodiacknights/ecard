@@ -1,0 +1,23 @@
+{
+  "name": "ecard",
+  "version": "1.0.0",
+  "description": "card game",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zodiacknights/ecard.git"
+  },
+  "author": "Ken Kim, Nate Parrish",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zodiacknights/ecard/issues"
+  },
+  "homepage": "https://github.com/zodiacknights/ecard#readme",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}
