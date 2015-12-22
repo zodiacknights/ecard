@@ -4,6 +4,7 @@
   "description": "card game",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "mocha test"
   },
   "repository": {
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/zodiacknights/ecard/issues"
   },
-  "homepage": "https://github.com/zodiacknights/ecard#readme"
+  "homepage": "https://github.com/zodiacknights/ecard#readme",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
 }
