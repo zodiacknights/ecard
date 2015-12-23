@@ -9,6 +9,21 @@
   </head>
 
   <body ng-controller="ecardController">
+
+  <div class="OneContainer">
+  Player 1
+    <div class="OneHand" ng-repeat="pOnecard in playOneCards track by $index">
+    {{pOnecard}}
+    </div>
+  </div>
+
+  <div class="TwoContainer">
+  Player 2
+    <div class="TwoHand" ng-repeat="pTwocard in playTwoCards track by $index">
+    <div class="TwoCard" ng-click="add=true" ng-show="!add">{{pTwocard}}</div>
+    </div>
+  </div>
+
   </body>
 
 
