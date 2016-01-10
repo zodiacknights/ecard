@@ -7,9 +7,10 @@ angular.module('myApp', [])
     var gamePlay = {oneCounter: true, twoCounter: false, oneValue: "", twoValue: ""};
     $scope.playOneCards = playOneCards;
     $scope.playTwoCards = playTwoCards;
+    var gameOver = false;
 
     $scope.oneClicked = function(pOne, index){
-      if (gamePlay.oneCounter){
+      if (gamePlay.oneCounter && !gameOver){
         gamePlay.oneCounter = false;
         gamePlay.twoCounter = true;
         pOne.hide = true;
@@ -18,7 +19,7 @@ angular.module('myApp', [])
     };
 
     $scope.twoClicked = function(pTwo, index){
-      if (gamePlay.twoCounter){
+      if (gamePlay.twoCounter && !gameOver){
         gamePlay.oneCounter = true;
         gamePlay.twoCounter = false;      	
         pTwo.hide = true;
@@ -33,12 +34,15 @@ angular.module('myApp', [])
       }
       if(gamePlay.oneValue === 'Citizen' && gamePlay.twoValue === 'Slave'){
         console.log('Player One wins');
+        gameOver = true;
       }
       if(gamePlay.oneValue === 'Emperor' && gamePlay.twoValue === 'Citizen'){
         console.log('Player One wins');
+        gameOver = true;
       }
       if(gamePlay.oneValue === 'Emperor' && gamePlay.twoValue === 'Slave'){
         console.log('Player Two wins');
+        gameOver = true;
       }
     };
 
