@@ -2,47 +2,82 @@ angular.module('myApp', [])
   .service('ecardService')
   .controller('ecardController', function($scope, $http) {
 
-    var playOneCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Emperor'}, {hide: false}];
-    var playTwoCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Slave'}, {hide: false}];
-    var gamePlay = {oneCounter: true, twoCounter: false, oneValue: "", twoValue: ""};
-    $scope.playOneCards = playOneCards;
-    $scope.playTwoCards = playTwoCards;
-    var gameOver = false;
+    $scope.init = function(){
+      $scope.$applyAsync(function(){
+        $scope.playOneCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Emperor'}, {hide: false}];
+        $scope.playTwoCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Slave'}, {hide: false}];
+        $scope.gamePlay = {oneValue: "", twoValue: ""};
+      });
+    };
+    $scope.init();
+
+
+    var host = location.origin.replace(/^http/, 'ws');
+    var ws = new WebSocket(host);
+    var whichPlayer = null;
+    var playedACard = false;
+    var status;
+
+    ws.onmessage = function(event){
+      var data = JSON.parse(event.data);
+      if(status !== data.status){
+        status = data.status;
+        console.log(status);
+      }
+      if(data.youAre && whichPlayer !== data.youAre){
+        console.log('you are player ' + data.youAre);
+        whichPlayer = data.youAre;
+      }
+      if(data.result){
+        $scope.gamePlay.oneValue = $scope.playOneCards[data.result.player1Move].card;
+        $scope.gamePlay.twoValue = $scope.playTwoCards[data.result.player2Move].card;
+        $scope.$apply(function(){
+          $scope.playOneCards[data.result.player1Move].hide = true;
+          $scope.playTwoCards[data.result.player2Move].hide = true;
+        });
+        $scope.showDown();
+        playedACard = false;
+      }
+    };
+
+    $scope.send = function(index){
+      var data = {
+        index: index
+      };
+      ws.send(JSON.stringify(data));
+    };
 
     $scope.oneClicked = function(pOne, index){
-      if (gamePlay.oneCounter && !gameOver){
-        gamePlay.oneCounter = false;
-        gamePlay.twoCounter = true;
+      if (whichPlayer === 1 && playedACard === false){
+        playedACard = true;
         pOne.hide = true;
-        gamePlay.oneValue = pOne.card;
+        $scope.send(index);
       }
     };
 
     $scope.twoClicked = function(pTwo, index){
-      if (gamePlay.twoCounter && !gameOver){
-        gamePlay.oneCounter = true;
-        gamePlay.twoCounter = false;      	
+      if (whichPlayer === 2 && playedACard === false){
+        playedACard = true;      	
         pTwo.hide = true;
-        gamePlay.twoValue = pTwo.card;
-        $scope.showDown();
+        $scope.send(index);
       }
     };
 
     $scope.showDown = function(){
-      if(gamePlay.oneValue === 'Citizen' && gamePlay.twoValue === 'Citizen'){
-        console.log('Draw');
+      if($scope.gamePlay.oneValue === 'Citizen' && $scope.gamePlay.twoValue === 'Citizen'){
+        alert('Draw');
       }
-      if(gamePlay.oneValue === 'Citizen' && gamePlay.twoValue === 'Slave'){
-        console.log('Player One wins');
-        gameOver = true;
+      if($scope.gamePlay.oneValue === 'Citizen' && $scope.gamePlay.twoValue === 'Slave'){
+        alert('Player One wins');
+        $scope.init();
       }
-      if(gamePlay.oneValue === 'Emperor' && gamePlay.twoValue === 'Citizen'){
-        console.log('Player One wins');
-        gameOver = true;
+      if($scope.gamePlay.oneValue === 'Emperor' && $scope.gamePlay.twoValue === 'Citizen'){
+        alert('Player One wins');
+        $scope.init();
       }
-      if(gamePlay.oneValue === 'Emperor' && gamePlay.twoValue === 'Slave'){
-        console.log('Player Two wins');
-        gameOver = true;
+      if($scope.gamePlay.oneValue === 'Emperor' && $scope.gamePlay.twoValue === 'Slave'){
+        alert('Player Two wins');
+        $scope.init();
       }
     };
 
