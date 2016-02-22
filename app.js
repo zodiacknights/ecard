@@ -11,12 +11,10 @@ angular.module('myApp', [])
     };
     $scope.init();
 
-
     var host = location.origin.replace(/^http/, 'ws');
     var ws = new WebSocket(host);
     var whichPlayer = null;
     var playedACard = false;
-    var status;
 
     ws.onmessage = function(event){
       var data = JSON.parse(event.data);
@@ -41,6 +39,10 @@ angular.module('myApp', [])
         $scope.showDown();
         playedACard = false;
       }
+    };
+
+    ws.onclose = function(event){
+      throw 'Client lost connection to the server.';
     };
 
     $scope.send = function(index){
