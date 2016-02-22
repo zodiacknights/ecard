@@ -101,7 +101,6 @@ wss.on('connection', function(ws) {
   });
 
   var playCard = function(playerRoom, index){
-    console.log('playCard', index);
     whichPlayer = playerRoom.player1.id === playerID ? 1 : 2;
     
     // save the move
