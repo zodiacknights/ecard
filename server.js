@@ -18,103 +18,135 @@ var waiting = [];
 
 var playerRooms = {};
 
+var status = {
+  waiting: 'waiting in queue',
+  play: 'play a card',
+  result: 'turn result, go again',
+  waitingMe: 'waiting for your move',
+  waitingYou: 'waiting for other player to move'
+};
+
 wss.on('connection', function(ws) {
   var playerID = Math.random();
 
-  var whichPlayer;
-
-  waiting.unshift(playerID);
-
-  var id = setInterval(function() {
-    var playerRoom = playerRooms[playerID];
-
-    // if no second player
-    if(!playerRoom && waiting.length < 2){
-      // wait for second player
-      return ws.send(JSON.stringify({
-        status: 'waiting for another player'
-      }));
-    // if second player joined
-    }else if(!playerRoom){
-      // put players in a room
-      var room = {
-        playersConnected: true,
-        player1Move: null,
-        player2Move: null,
-        playerOrder: [waiting.pop(), waiting.pop()],
-      };
-
-      room.gotResults = {};
-      room.gotResults[room.playerOrder[0]] = false;
-      room.gotResults[room.playerOrder[1]] = false;
-
-      playerRooms[room.playerOrder[0]] = room;
-      playerRooms[room.playerOrder[1]] = room;
-
-      return ws.send(JSON.stringify({
-        status: 'another player connected'
-      }));
-    }
-
-    // check if other player is connected
-    if(!playerRoom.playersConnected){
-      delete playerRooms[playerID];
-      ws.send(JSON.stringify({
-        status: 'player disconnected, restart needed'
-      }));
-      return ws.close();
-    }
-
-    // check if both players got the turn results
-    var bothGotResults = _.every(playerRoom.gotResults, function(gotResult) {return gotResult;});
-    if(bothGotResults){
-      playerRoom.player1Move = null;
-      playerRoom.player2Move = null;
-      _.each(playerRoom.gotResults, function(gotResult, key, results) {
-        results[key] = false;
-      });
-    }
-
-    whichPlayer = playerRoom.playerOrder[0] === playerID ? 1 : 2;
-    // if no card played this turn
-    if(playerRoom.player1Move === null || playerRoom.player2Move === null){
-      // tell player to play a card
-      return ws.send(JSON.stringify({
-        youAre: whichPlayer,
-        status: 'waiting on a player to move'
-      }));
-    // if both cards are played
-    } else {
-      // send card data to each player
-      playerRoom.gotResults[playerID] = true;
-      return ws.send(JSON.stringify({
-        result: {
-          player1Move: playerRoom.player1Move,
-          player2Move: playerRoom.player2Move
-        },
-        status: 'turn result'
-      }));
-    }
-
-  }, 1000);
+  waiting.unshift({
+    id: playerID,
+    ws: ws
+  });
 
   console.log('websocket connection open');
 
+  var waitingInQueue = function(playerWS){
+    playerWS.send(JSON.stringify({
+      reset: true,
+      status: status.waiting
+    }));
+  };
+
+  var createRoom = function(){
+    var player1 = waiting.pop();
+    var player2 = waiting.pop();
+
+    var room = {
+      result: {
+        player1Move: null,
+        player2Move: null
+      },
+      player1: player1,
+      player2: player2
+    };
+
+    playerRooms[player1.id] = room;
+    playerRooms[player2.id] = room;
+
+    player1.ws.send(JSON.stringify({
+      youAre: 1,
+      status: status.play
+    }));
+    player2.ws.send(JSON.stringify({
+      youAre: 2,
+      status: status.play
+    }));
+  };
+
+  var checkQueue = function(playerWS){
+    if(waiting.length < 2)
+      return waitingInQueue(playerWS);
+    else
+      return createRoom();
+  };
+
   ws.on('close', function() {
     console.log('websocket connection close');
-    waiting = waiting.filter(function(id){
-      return id !== playerID;
+
+    // clear player from waiting queue
+    waiting = waiting.filter(function(player){
+      return player.id !== playerID;
     });
-    clearInterval(id);
+
+    // clear room and move other player to queue
+    var playerRoom = playerRooms[playerID];
+    if(!playerRoom) return;
+    var playerToRequeue;
+    if(playerRoom.player1.id === playerID){
+      playerToRequeue = playerRoom.player2;
+    }else{
+      playerToRequeue = playerRoom.player1;
+    }
+    waiting.unshift(playerToRequeue);
+    delete playerRooms[playerRoom.player1.id];
+    delete playerRooms[playerRoom.player2.id];
+
+    checkQueue(playerToRequeue.ws);
   });
 
+  var playCard = function(playerRoom, index){
+    console.log('playCard', index);
+    whichPlayer = playerRoom.player1.id === playerID ? 1 : 2;
+    
+    // save the move
+    if(whichPlayer === 1)
+      playerRoom.result.player1Move = index;
+    else
+      playerRoom.result.player2Move = index;
+
+    // if both players moved, send results and reset turn
+    if(_.every(playerRoom.result, function(move){return move !== null;})){
+      playerRoom.player1.ws.send(JSON.stringify({
+        result: playerRoom.result,
+        status: status.result
+      }));
+      playerRoom.player2.ws.send(JSON.stringify({
+        result: playerRoom.result,
+        status: status.result
+      }));
+      playerRoom.result.player1Move = null;
+      playerRoom.result.player2Move = null;
+
+    // if one player has moved, tell other player to move
+    }else if(playerRoom.result.player1Move === null){
+      playerRoom.player1.ws.send(JSON.stringify({
+        status: status.waitingMe
+      }));
+      playerRoom.player2.ws.send(JSON.stringify({
+        status: status.waitingYou
+      }));
+    }else{
+      playerRoom.player1.ws.send(JSON.stringify({
+        status: status.waitingYou
+      }));
+      playerRoom.player2.ws.send(JSON.stringify({
+        status: status.waitingMe
+      }));
+    }
+  };
+  
   ws.on('message', function(data){
+    playerRoom = playerRooms[playerID];
     data = JSON.parse(data);
-    if(whichPlayer === 1){
-      playerRooms[playerID].player1Move = data.index;
-    }
-    if(whichPlayer === 2){
-      playerRooms[playerID].player2Move = data.index;
-    }
+    if(data.index !== undefined)
+      return playCard(playerRoom, data.index);
   });
+
+  checkQueue(ws);
 });
