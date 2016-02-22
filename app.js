@@ -66,7 +66,18 @@ angular.module('myApp', [])
       }
     };
 
+    $scope.isCheating = function(){
+      var hideCheck = function(card){
+        return card.hide;
+      };
+      return $scope.playOneCards.filter(hideCheck).length !== $scope.playTwoCards.filter(hideCheck).length;
+    };
+
     $scope.showDown = function(){
+      if($scope.isCheating()){
+        alert('Someone Cheated');
+        return $scope.init();
+      }
       if($scope.gamePlay.oneValue === 'Citizen' && $scope.gamePlay.twoValue === 'Citizen'){
         alert('Draw');
       }
