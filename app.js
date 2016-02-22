@@ -20,13 +20,13 @@ angular.module('myApp', [])
 
     ws.onmessage = function(event){
       var data = JSON.parse(event.data);
-      if(data.youAre){
-        console.log('you are player ' + data.youAre);
-        whichPlayer = data.youAre;
-      }
       if(data.reset){
         console.log('game reset');
         $scope.init();
+      }
+      if(data.youAre){
+        console.log('you are player ' + data.youAre);
+        whichPlayer = data.youAre;
       }
       if(data.status){
         console.log(data.status);

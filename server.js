@@ -38,7 +38,6 @@ wss.on('connection', function(ws) {
 
   var waitingInQueue = function(playerWS){
     playerWS.send(JSON.stringify({
-      reset: true,
       status: status.waiting
     }));
   };
@@ -61,10 +60,12 @@ wss.on('connection', function(ws) {
 
     player1.ws.send(JSON.stringify({
       youAre: 1,
+      reset: true,
       status: status.play
     }));
     player2.ws.send(JSON.stringify({
       youAre: 2,
+      reset: true,
       status: status.play
     }));
   };
