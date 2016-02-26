@@ -12,15 +12,13 @@
 
   <div class="OneContainer">
   Player 1
-    <div class="OneHand" ng-repeat="pOne in playOneCards track by $index" ng-hide="pOne.hide">
-      <div class="OneCard"  ng-click="oneClicked(pOne, $index)">{{pOne.card}}</div>
+    <div ng-repeat="pOne in playOneCards track by $index" ng-class="{'Emperor': $index == 4}" ng-hide="pOne.hide" ng-click="oneClicked(pOne, $index)">{{pOne.card}}
     </div>
   </div>
 
   <div class="TwoContainer">
   Player 2
-    <div class="TwoHand" ng-repeat="pTwo in playTwoCards track by $index" ng-hide="pTwo.hide">
-      <div class="TwoCard" ng-click="twoClicked(pTwo, $index)">{{pTwo.card}}</div>
+    <div class="TwoHand" ng-repeat="pTwo in playTwoCards track by $index" ng-class=" {'Slave': $index == 4}" ng-hide="pTwo.hide" ng-click="twoClicked(pTwo, $index)">{{pTwo.card}}    
     </div>
   </div>
 

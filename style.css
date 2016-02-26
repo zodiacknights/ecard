@@ -1,3 +1,7 @@
-.TwoHand 1 {
+.OneContainer .Emperor {
+  background-color: yellow;
+}
+
+.TwoContainer .Slave {
   background-color: yellow;
 }
