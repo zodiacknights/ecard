@@ -1,0 +1,26 @@
+h3.title {
+  width: 100px;
+}
+
+.Citizen{
+  float: left;
+  height: 270px;
+  width: 205px;
+  background-image: url("../style/Citizen.png");
+}
+
+.Emperor {
+  float: left;
+  height: 270px;
+  width: 205px;
+  background-image: url("../style/Emperor.png");
+}
+
+.Slave {
+  float: left;
+  height: 270px;
+  width: 205px;
+  background-image: url("../style/Slave.png");
+}
+
+

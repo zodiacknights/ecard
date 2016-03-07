@@ -5,22 +5,20 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.min.js"></script>
     <script src="app.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style/style.css">
   </head>
 
   <body ng-controller="ecardController">
 
-  <div class="OneContainer">
-  Player 1
-    <div class="OneHand" ng-repeat="pOne in playOneCards track by $index" ng-hide="pOne.hide">
-      <div class="OneCard"  ng-click="oneClicked(pOne, $index)">{{pOne.card}}</div>
+  <h3>Player 1</h3>
+  <div class="oneHand">
+    <div class="pOneHand" ng-repeat="pOne in playOneCards track by $index" ng-class="{'Citizen': $index < 4, 'Emperor': $index == 4}" ng-hide="pOne.hide" ng-click="oneClicked(pOne, $index)">{{pOne.card}}
     </div>
   </div>
 
-  <div class="TwoContainer">
-  Player 2
-    <div class="TwoHand" ng-repeat="pTwo in playTwoCards track by $index" ng-hide="pTwo.hide">
-      <div class="TwoCard" ng-click="twoClicked(pTwo, $index)">{{pTwo.card}}</div>
+  <h3 class="title">Player 2</h3>
+  <div class="twoHand">
+    <div class="pTwoHand" ng-repeat="pTwo in playTwoCards track by $index" ng-class=" {'Citizen': $index < 4,'Slave': $index == 4}" ng-hide="pTwo.hide" ng-click="twoClicked(pTwo, $index)">{{pTwo.card}}
     </div>
   </div>
 

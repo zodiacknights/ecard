@@ -4,10 +4,10 @@ var io = require('socket.io')(app);
 var app = express();
 var http = require('http');
 var _ = require('lodash');
+var path = require('path');
 
-app.get('/', function(req, res) {res.sendFile(__dirname + '/index.html');});
-app.get('/app.js', function(req, res) {res.sendFile(__dirname + '/app.js');});
-app.get('/style.css', function(req, res) {res.sendFile(__dirname + '/style.css');});
+app.use('/', express.static(path.join(__dirname)));
+
 
 var server = http.createServer(app);
 server.listen(process.env.PORT || 3000);
