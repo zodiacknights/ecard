@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "card game",
   "main": "server.js",
+  "scripts":{
+    "start": "node server.js",
+    "test": "mocha test"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zodiacknights/ecard.git"
-  },
-  "script":{
-    "start": "node server.js",
-    "test": "mocha test"
   },
   "author": "Ken Kim, Nate Parrish",
   "license": "ISC",
