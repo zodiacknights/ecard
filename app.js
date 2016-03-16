@@ -6,7 +6,7 @@ angular.module('myApp', [])
       $scope.$applyAsync(function(){
         $scope.playOneCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Emperor'}, {hide: false}];
         $scope.playTwoCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Slave'}, {hide: false}];
-        $scope.gamePlay = {oneValue: "", twoValue: ""};
+        $scope.gamePlay = {oneCardValue: "", twoCardValue: "", oneScore: 0, twoScore: 0};
       });
     };
     $scope.init();
@@ -30,8 +30,8 @@ angular.module('myApp', [])
         console.log(data.status);
       }
       if(data.result){
-        $scope.gamePlay.oneValue = $scope.playOneCards[data.result.player1Move].card;
-        $scope.gamePlay.twoValue = $scope.playTwoCards[data.result.player2Move].card;
+        $scope.gamePlay.oneCardValue = $scope.playOneCards[data.result.player1Move].card;
+        $scope.gamePlay.twoCardValue = $scope.playTwoCards[data.result.player2Move].card;
         $scope.$apply(function(){
           $scope.playOneCards[data.result.player1Move].hide = true;
           $scope.playTwoCards[data.result.player2Move].hide = true;
@@ -80,18 +80,22 @@ angular.module('myApp', [])
         alert('Someone Cheated');
         return $scope.init();
       }
-      if($scope.gamePlay.oneValue === 'Citizen' && $scope.gamePlay.twoValue === 'Citizen'){
+      if($scope.gamePlay.oneCardValue === 'Citizen' && $scope.gamePlay.twoCardValue === 'Citizen'){
         alert('Draw');
       }
-      if($scope.gamePlay.oneValue === 'Citizen' && $scope.gamePlay.twoValue === 'Slave'){
+      if($scope.gamePlay.oneCardValue === 'Citizen' && $scope.gamePlay.twoCardValue === 'Slave'){
+        $scope.gamePlay.oneScore += 1;
         alert('Player One wins');
         $scope.init();
       }
-      if($scope.gamePlay.oneValue === 'Emperor' && $scope.gamePlay.twoValue === 'Citizen'){
+      if($scope.gamePlay.oneCardValue === 'Emperor' && $scope.gamePlay.twoCardValue === 'Citizen'){
+        $scope.gamePlay.oneScore += 1;
+        console.log($scope.gamePlay.oneScore)
         alert('Player One wins');
         $scope.init();
       }
-      if($scope.gamePlay.oneValue === 'Emperor' && $scope.gamePlay.twoValue === 'Slave'){
+      if($scope.gamePlay.oneCardValue === 'Emperor' && $scope.gamePlay.twoCardValue === 'Slave'){
+        $scope.gamePlay.twoScore += 1;
         alert('Player Two wins');
         $scope.init();
       }
