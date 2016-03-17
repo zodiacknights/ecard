@@ -1,5 +1,5 @@
 h3.title {
-  width: 100px;
+  width: 1px;
 }
 
 .Citizen{
@@ -24,3 +24,6 @@ h3.title {
 }
 
 
+.slider{
+  padding-top:400px;
+}

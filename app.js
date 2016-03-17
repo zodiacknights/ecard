@@ -1,4 +1,4 @@
-angular.module('myApp', [])
+angular.module('myApp', ['ngMaterial'])
   .service('ecardService')
   .controller('ecardController', function($scope, $http) {
 
