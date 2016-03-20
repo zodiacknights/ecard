@@ -15,6 +15,7 @@ angular.module('myApp', ['ngMaterial'])
       $scope.$applyAsync(function(){
         $scope.playOneCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Emperor'}, {hide: false}];
         $scope.playTwoCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Slave'}, {hide: false}];
+        $scope.swapped = false;
       });
     };
 
@@ -22,6 +23,7 @@ angular.module('myApp', ['ngMaterial'])
       $scope.$applyAsync(function(){
         $scope.playOneCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Slave'}, {hide: false}];
         $scope.playTwoCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Emperor'}, {hide: false}];
+        $scope.swapped = true;
       });
     };
 
@@ -100,30 +102,37 @@ angular.module('myApp', ['ngMaterial'])
         alert('Someone Cheated');
         return $scope.reset();
       }
-      if($scope.gamePlay.oneCardValue === 'Citizen' && $scope.gamePlay.twoCardValue === 'Citizen'){
+      var results = [];
+      var winner;
+
+      if (!$scope.swapped){
+        results.push($scope.gamePlay.oneCardValue, $scope.gamePlay.twoCardValue, 'Player One wins', 'Player Two wins');
+      }
+      else{
+        results.push($scope.gamePlay.twoCardValue, $scope.gamePlay.oneCardValue, 'Player Two wins', 'Player One wins');
+      }
+
+      if(results[0] === 'Citizen' && results[1] === 'Citizen'){
         alert('Draw');
         return;
       }
-      if($scope.gamePlay.oneCardValue === 'Citizen' && $scope.gamePlay.twoCardValue === 'Slave'){
-        $scope.gamePlay.oneScore++;
-        $scope.gamePlay.round++;
-        alert('Player One wins');
+      if(results[0] === 'Citizen' && results[1] === 'Slave' || results[0] === 'Emperor' && results[1] === 'Citizen'){
+        winner = results[2];
+        alert(results[2]);
       }
-      if($scope.gamePlay.oneCardValue === 'Emperor' && $scope.gamePlay.twoCardValue === 'Citizen'){
-        $scope.gamePlay.oneScore++;
-        $scope.gamePlay.round++;
-        alert('Player One wins');
+
+      if(results[0] === 'Emperor' && results[1] === 'Slave'){
+        winner = results[3];
+        alert(results[3]);
       }
-      if($scope.gamePlay.oneCardValue === 'Emperor' && $scope.gamePlay.twoCardValue === 'Slave'){
-        $scope.gamePlay.twoScore++;
-        $scope.gamePlay.round++;
-        alert('Player Two wins');
-      }
-      console.log($scope.gamePlay.oneScore);
+
+      winner === 'Player One wins' ? $scope.gamePlay.oneScore++ : $scope.gamePlay.twoScore++;
+      $scope.gamePlay.round++;
+
       if($scope.gamePlay.round%5 === 0 && $scope.gameTrack === $scope.reset) {
         $scope.gameTrack = $scope.swap;
       }
-      else if ($scope.gamePlay.round%5 === 0){
+      else if ($scope.gamePlay.round%5 === 0 && $scope.gameTrack === $scope.swap){
         $scope.gameTrack = $scope.reset;
       }
       $scope.gameTrack();
