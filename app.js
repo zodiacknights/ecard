@@ -138,4 +138,27 @@ angular.module('myApp', ['ngMaterial'])
       $scope.gameTrack();
     };
 
+
+        $scope.func = function(element, player){
+      if (element < 4){
+        return "Citizen";
+      }
+      if (player === 'one' && element === 4){
+        if (!$scope.swapped){
+          return 'Emperor';
+        } 
+        else {
+          return 'Slave';
+        }
+      }
+      if (player === 'two' && element === 4){
+        if(!$scope.swapped){
+          return 'Slave';
+        }
+        else{
+          return 'Emperor';
+        }
+      }
+    };
+
 });
