@@ -140,6 +140,12 @@ wss.on('connection', function(ws) {
       }));
     }
   };
+
+//here
+  ws.on('chat', function(msg){
+    console.log('message: ' + msg);
+  });
+
   
   ws.on('message', function(data){
     playerRoom = playerRooms[playerID];
