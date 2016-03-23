@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html ng-app="myApp">
   <head>
+    <link rel="stylesheet" href="/style/style.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.1/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.min.js"></script>
-    <script src="app.js"></script>
-    <link rel="stylesheet" href="/style/style.css">
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.css">
+    <script src="app.js"></script>   
+        <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      ng-form { background: #000; padding: 3px; position: fixed; width: 20%; }
+      ng-form input { border: 0; padding: 10px; width: 80%; margin-right: .5%; }
+      ng-form button { width: 5%; background: rgb(130, 224, 255); border: none; padding: 10px; padding-right: 25px; text-indent: -8px;}
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
   </head>
 
   <body ng-controller="ecardController">
@@ -25,8 +35,14 @@
   <div class="twoHand">
     <div class="pTwoHand" ng-repeat="pTwo in playTwoCards track by $index" ng-class="func($index, 'two')" ng-hide="pTwo.hide" ng-click="twoClicked(pTwo, $index)">{{pTwo.card}}
     </div>
-  </div>
-    <div class="slider">
+
+    <form ng-submit="submit()">
+      Enter text and hit enter:
+      <input type="text" ng-model="text" name="text" />
+      <input type="submit" id="submit" value="Submit" />
+      <pre>list={{list}}</pre>
+    </form>
+<!--     <div class="slider">
     <md-slider-container>
       <span>R</span>
       <md-slider flex="" min="0" max="255" ng-model="color.red" aria-label="red" id="red-slider" style="width:400px;padding:10px;">
@@ -40,7 +56,7 @@
         </form>
       </md-input-container>
     </md-slider-container>
-    </div>
+    </div> -->
 
   </body>
 

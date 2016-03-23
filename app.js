@@ -34,6 +34,7 @@ angular.module('myApp', ['ngMaterial'])
     var whichPlayer = null;
     var playedACard = false;
 
+
     ws.onmessage = function(event){
       var data = JSON.parse(event.data);
       if(data.reset){
@@ -138,8 +139,7 @@ angular.module('myApp', ['ngMaterial'])
       $scope.gameTrack();
     };
 
-
-        $scope.func = function(element, player){
+    $scope.func = function(element, player){
       if (element < 4){
         return "Citizen";
       }
@@ -159,6 +159,16 @@ angular.module('myApp', ['ngMaterial'])
           return 'Emperor';
         }
       }
+    };
+//here
+    $scope.list = [];
+    $scope.text = 'test';
+    $scope.submit = function(){
+        if ($scope.text) {
+          $scope.list.push(this.text);
+          ws.emit(this.text);
+        $scope.text = '';
+        }
     };
 
 });
