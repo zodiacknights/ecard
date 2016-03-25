@@ -1,18 +1,17 @@
-var WebSocketServer = require('ws').Server;
 var express = require('express');
-var io = require('socket.io')(app);
 var app = express();
-var http = require('http');
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 var _ = require('lodash');
 var path = require('path');
+// var socket = io.connect('http://localhost:3000');
 
 app.use('/', express.static(path.join(__dirname)));
 
 
-var server = http.createServer(app);
-server.listen(process.env.PORT || 3000);
-
-var wss = new WebSocketServer({server: server});
+http.listen(3000, function(){
+  console.log('listening on *:3000');
+});
 
 var waiting = [];
 
@@ -26,21 +25,14 @@ var status = {
   waitingYou: 'waiting for other player to move'
 };
 
-wss.on('connection', function(ws) {
-  var playerID = Math.random();
+io.on('connection', function(socket) {
+  console.log('websocket connection opened');
 
+  var playerID = Math.random();
   waiting.unshift({
     id: playerID,
-    ws: ws
+    socket: socket
   });
-
-  console.log('websocket connection open');
-
-  var waitingInQueue = function(playerWS){
-    playerWS.send(JSON.stringify({
-      status: status.waiting
-    }));
-  };
 
   var createRoom = function(){
     var player1 = waiting.pop();
@@ -58,27 +50,28 @@ wss.on('connection', function(ws) {
     playerRooms[player1.id] = room;
     playerRooms[player2.id] = room;
 
-    player1.ws.send(JSON.stringify({
+    player1.socket.emit('player joined', {
       youAre: 1,
       reset: true,
       status: status.play
-    }));
-    player2.ws.send(JSON.stringify({
+    });
+    player2.socket.emit('player joined', {
       youAre: 2,
       reset: true,
       status: status.play
-    }));
+    });
   };
 
-  var checkQueue = function(playerWS){
+  var checkQueue = function(){
     if(waiting.length < 2)
-      return waitingInQueue(playerWS);
-    else
-      return createRoom();
+      socket.emit('waiting', {status: status.waiting});
+    else{
+      createRoom();
+    }
   };
 
-  ws.on('close', function() {
-    console.log('websocket connection close');
+  socket.on('disconnect', function() {
+    console.log('websocket connection closed');
 
     // clear player from waiting queue
     waiting = waiting.filter(function(player){
@@ -98,7 +91,7 @@ wss.on('connection', function(ws) {
     delete playerRooms[playerRoom.player1.id];
     delete playerRooms[playerRoom.player2.id];
 
-    checkQueue(playerToRequeue.ws);
+    checkQueue(playerToRequeue.socket);
   });
 
   var playCard = function(playerRoom, index){
@@ -112,47 +105,45 @@ wss.on('connection', function(ws) {
 
     // if both players moved, send results and reset turn
     if(_.every(playerRoom.result, function(move){return move !== null;})){
-      playerRoom.player1.ws.send(JSON.stringify({
+      playerRoom.player1.socket.emit('game on', {
         result: playerRoom.result,
         status: status.result
-      }));
-      playerRoom.player2.ws.send(JSON.stringify({
+      });
+      playerRoom.player2.socket.emit('game on', {
         result: playerRoom.result,
         status: status.result
-      }));
+      });
       playerRoom.result.player1Move = null;
       playerRoom.result.player2Move = null;
 
     // if one player has moved, tell other player to move
     }else if(playerRoom.result.player1Move === null){
-      playerRoom.player1.ws.send(JSON.stringify({
+      playerRoom.player1.socket.emit('game on', {
         status: status.waitingMe
-      }));
-      playerRoom.player2.ws.send(JSON.stringify({
+      });
+      playerRoom.player2.socket.emit('game on', {
         status: status.waitingYou
-      }));
+      });
     }else{
-      playerRoom.player1.ws.send(JSON.stringify({
+      playerRoom.player1.socket.emit('game on', {
         status: status.waitingYou
-      }));
-      playerRoom.player2.ws.send(JSON.stringify({
+      });
+      playerRoom.player2.socket.emit('game on', {
         status: status.waitingMe
-      }));
+      });
     }
   };
 
-//here
-  ws.on('chat', function(msg){
-    console.log('message: ' + msg);
+  socket.on('chat', function(data){
+    io.emit('chat', {msg: data.msg, player: data.player});
   });
 
   
-  ws.on('message', function(data){
+  socket.on('message', function(data){
     playerRoom = playerRooms[playerID];
-    data = JSON.parse(data);
     if(data.index !== undefined)
       return playCard(playerRoom, data.index);
   });
 
-  checkQueue(ws);
+  checkQueue(socket);
 });
