@@ -13,21 +13,22 @@
     <div class="cards">
       <h3>P1</h3>
       <div class="oneHand">
-        <div class="pOneHand" ng-repeat="pOne in playOneCards track by $index" ng-class="func($index, 'one')" ng-hide="pOne.hide" ng-click="oneClicked(pOne, $index)">{{pOne.card}}
+        <div class="pOneHand" ng-repeat="pOne in playOneCards track by $index" ng-class="func($index, 'one')" ng-hide="pOne.hide" ng-click="oneClicked(pOne, $index)">{{ pOne.card }}
         </div>
       </div>
 
-      <h3 class="title">P2</h3>
+      <h3>P2</h3>
       <div class="twoHand">
-        <div class="pTwoHand" ng-repeat="pTwo in playTwoCards track by $index" ng-class="func($index, 'two')" ng-hide="pTwo.hide" ng-click="twoClicked(pTwo, $index)">{{pTwo.card}}
+        <div class="pTwoHand" ng-repeat="pTwo in playTwoCards track by $index" ng-class="func($index, 'two')" ng-hide="pTwo.hide" ng-click="twoClicked(pTwo, $index)">{{ pTwo.card }}
         </div>
       </div>
     </div>
     <div class="chat">
+    <div class="chatBar">Chat Room</div>
       <div class="chatBox" scroll-bottom="messages">
         <div ng-repeat="message in messages track by $index">
           <div class="chatMessage">
-            <div class="messageTextInMessage">{{message}}</div>
+            <div class="messageTextInMessage">{{ message }}</div>
           </div>
         </div>
       </div>
@@ -36,6 +37,26 @@
           <input type="text" ng-model="text" name="text" placeholder="Enter text" />
         </form>
       </div>
+    </div>
+
+    <div class="roundCounter">
+    <div class="p1Score">
+      <table>
+      <th>
+        <tr>
+          <td ng-repeat="scores in p1Scores track by $index">{{ scores }}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="scoreBar"></div>
+    <div class="p2Score">
+      <table>
+        <tr>
+          <td ng-repeat="scores in p2Scores track by $index">{{ scores }}</td>
+        </tr>
+      </table>
+    </div>
+    
     </div>
   </div>
 

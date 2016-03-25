@@ -1,19 +1,4 @@
 angular.module('myApp', [])
-  .directive('scrollBottom', function () {
-    return {
-      scope: {
-        scrollBottom: "="
-      },
-      link: function (scope, element) {
-        scope.$watchCollection('scrollBottom', function (newValue) {
-          if (newValue)
-          {
-            $(element).scrollTop($(element)[0].scrollHeight);
-          }
-        });
-      }
-    }
-  })
   .service('ecardService')
   .controller('ecardController', function($scope, $http) {
 
@@ -23,12 +8,14 @@ angular.module('myApp', [])
     $scope.messages = [];
     $scope.im = {};
     $scope.text = '';
+    $scope.p1Scores= [ "-", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "];
+    $scope.p2Scores= [ "-", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "];
  
     $scope.init = function(){
       $scope.$applyAsync(function(){
         $scope.playOneCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Emperor'}, {hide: false}];
         $scope.playTwoCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Slave'}, {hide: false}];
-        $scope.gamePlay = {oneCardValue: "", twoCardValue: "", oneScore: 0, twoScore: 0, round: 0};
+        $scope.gamePlay = {oneCardValue: "", twoCardValue: "", oneScore: 0, twoScore: 0, round: 1};
         $scope.gameTrack = $scope.reset;
       });
     };
@@ -149,7 +136,19 @@ angular.module('myApp', [])
         alert(results[3]);
       }
 
-      winner === 'Player One wins' ? $scope.gamePlay.oneScore++ : $scope.gamePlay.twoScore++;
+      if (winner === 'Player One wins'){
+        $scope.gamePlay.oneScore++;
+        $scope.p1Scores[$scope.gamePlay.round - 1] = "W";
+        $scope.p2Scores[$scope.gamePlay.round - 1] = "L";
+      }
+      else if (winner === 'Player Two wins'){
+        $scope.gamePlay.twoScore++;
+        $scope.p1Scores[$scope.gamePlay.round - 1] = "L"; 
+        $scope.p2Scores[$scope.gamePlay.round - 1] = "W";       
+      }
+      
+      $scope.p1Scores[$scope.gamePlay.round] = "-";
+      $scope.p2Scores[$scope.gamePlay.round] = "-";
       $scope.gamePlay.round++;
 
       if($scope.gamePlay.round%5 === 0 && $scope.gameTrack === $scope.reset) {
@@ -158,6 +157,8 @@ angular.module('myApp', [])
       else if ($scope.gamePlay.round%5 === 0 && $scope.gameTrack === $scope.swap){
         $scope.gameTrack = $scope.reset;
       }
+
+
       $scope.gameTrack();
     };
 
@@ -185,16 +186,15 @@ angular.module('myApp', [])
 
     
     $scope.submit = function(){
-        if ($scope.text) {
-          socket.emit('chat', this.text);
-        $scope.text = '';
-        }
+      if ($scope.text) {
+        socket.emit('chat', {msg: this.text, player: whichPlayer});
+      $scope.text = '';
+      }
     };
 
-  socket.on('chat', function(msg){
-    $scope.messages.push(msg);
-    $scope.$apply()
-    console.log($scope.messages)
-  });
+    socket.on('chat', function(data){
+      $scope.messages.push("Player " + data.player + ": " + data.msg);
+      $scope.$apply()
+    });
 
 });

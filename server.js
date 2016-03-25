@@ -33,7 +33,7 @@ io.on('connection', function(socket) {
     id: playerID,
     socket: socket
   });
-  
+
   var createRoom = function(){
     var player1 = waiting.pop();
     var player2 = waiting.pop();
@@ -134,10 +134,8 @@ io.on('connection', function(socket) {
     }
   };
 
-//here
-  socket.on('chat', function(msg){
-    io.emit('chat', msg);
-    console.log('message: ' + msg);
+  socket.on('chat', function(data){
+    io.emit('chat', {msg: data.msg, player: data.player});
   });
 
   
