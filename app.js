@@ -1,7 +1,29 @@
-angular.module('myApp', ['ngMaterial'])
+angular.module('myApp', [])
+  .directive('scrollBottom', function () {
+    return {
+      scope: {
+        scrollBottom: "="
+      },
+      link: function (scope, element) {
+        scope.$watchCollection('scrollBottom', function (newValue) {
+          if (newValue)
+          {
+            $(element).scrollTop($(element)[0].scrollHeight);
+          }
+        });
+      }
+    }
+  })
   .service('ecardService')
   .controller('ecardController', function($scope, $http) {
 
+    var whichPlayer = null;
+    var playedACard = false;
+    var socket = io();
+    $scope.messages = [];
+    $scope.im = {};
+    $scope.text = '';
+ 
     $scope.init = function(){
       $scope.$applyAsync(function(){
         $scope.playOneCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Emperor'}, {hide: false}];
@@ -29,14 +51,11 @@ angular.module('myApp', ['ngMaterial'])
 
     $scope.init();
 
-    var host = location.origin.replace(/^http/, 'ws');
-    var ws = new WebSocket(host);
-    var whichPlayer = null;
-    var playedACard = false;
+    socket.on('waiting', function(data){
+      console.log(data.status);
+    });
 
-
-    ws.onmessage = function(event){
-      var data = JSON.parse(event.data);
+    socket.on('player joined', function (data){
       if(data.reset){
         console.log('game reset');
         $scope.init();
@@ -45,6 +64,9 @@ angular.module('myApp', ['ngMaterial'])
         console.log('you are player ' + data.youAre);
         whichPlayer = data.youAre;
       }
+    });
+
+    socket.on('game on', function(data){
       if(data.status){
         console.log(data.status);
       }
@@ -58,17 +80,17 @@ angular.module('myApp', ['ngMaterial'])
         $scope.showDown();
         playedACard = false;
       }
-    };
+    });
 
-    ws.onclose = function(event){
+    socket.on('disconnect', function(event){
       throw 'Client lost connection to the server.';
-    };
+    });
 
     $scope.send = function(index){
       var data = {
         index: index
       };
-      ws.send(JSON.stringify(data));
+     socket.send(data);
     };
 
     $scope.submit = function(){
@@ -160,15 +182,19 @@ angular.module('myApp', ['ngMaterial'])
         }
       }
     };
-//here
-    $scope.list = [];
-    $scope.text = 'test';
+
+    
     $scope.submit = function(){
         if ($scope.text) {
-          $scope.list.push(this.text);
-          ws.emit(this.text);
+          socket.emit('chat', this.text);
         $scope.text = '';
         }
     };
+
+  socket.on('chat', function(msg){
+    $scope.messages.push(msg);
+    $scope.$apply()
+    console.log($scope.messages)
+  });
 
 });

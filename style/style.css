@@ -22,8 +22,38 @@ h3.title {
   width: 205px;
   background-image: url("../style/Slave.png");
 }*/
+.cards {
+  display: inline-block;
+  vertical-align: top;
+}
 
+.container{
+  text-align: center;
+  padding-top: 50px;
+}
 
-.slider{
-  padding-top:400px;
+.chat {
+  float:right;
+  display: inline-block;
+}
+.chatBox {
+  overflow : auto;
+  width : 250px;
+  height : 300px;
+  border: 1px solid;
+  padding: 10px 10px 10px 10px;
+}
+.chatMessage {
+  padding: 2px 40px;
+  background: #ffffff;
+  border-radius: 25px;
+  text-align: left;
+  margin-bottom: 8px;
+  max-width: 250px;
+}
+.submitForm {
+/*  float: left;*/
+}
+.submitForm input {
+  width: 250px;
 }
