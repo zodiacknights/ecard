@@ -3,44 +3,62 @@
   <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.1/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.1/angular-route.min.js"></script>
     <script src="app.js"></script>
-    <link rel="stylesheet" href="/style/style.css">
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/style/style.css">   
   </head>
-
   <body ng-controller="ecardController">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.1/angular-animate.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.1/angular-aria.min.js"></script>
-    <!-- Angular Material Javascript now available via Google CDN; version 0.11.2 used here -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.js"></script>
+  <div class="container">
+    <div class="cards">
+      <h3>P1</h3>
+      <div class="oneHand">
+        <div class="pOneHand" ng-repeat="pOne in playOneCards track by $index" ng-class="func($index, 'one')" ng-hide="pOne.hide" ng-click="oneClicked(pOne, $index)">{{ pOne.card }}
+        </div>
+      </div>
 
-  <h3>P1</h3>
-  <div class="oneHand">
-    <div class="pOneHand" ng-repeat="pOne in playOneCards track by $index" ng-class="func($index, 'one')" ng-hide="pOne.hide" ng-click="oneClicked(pOne, $index)">{{pOne.card}}
+      <h3>P2</h3>
+      <div class="twoHand">
+        <div class="pTwoHand" ng-repeat="pTwo in playTwoCards track by $index" ng-class="func($index, 'two')" ng-hide="pTwo.hide" ng-click="twoClicked(pTwo, $index)">{{ pTwo.card }}
+        </div>
+      </div>
     </div>
-  </div>
-
-  <h3 class="title">P2</h3>
-  <div class="twoHand">
-    <div class="pTwoHand" ng-repeat="pTwo in playTwoCards track by $index" ng-class="func($index, 'two')" ng-hide="pTwo.hide" ng-click="twoClicked(pTwo, $index)">{{pTwo.card}}
-    </div>
-  </div>
-    <div class="slider">
-    <md-slider-container>
-      <span>R</span>
-      <md-slider flex="" min="0" max="255" ng-model="color.red" aria-label="red" id="red-slider" style="width:400px;padding:10px;">
-      </md-slider>     
-      <md-input-container>
-        <input flex="" id="input1" type="number" ng-model="color.red" aria-label="red" aria-controls="red-slider" >
-      </md-input-container>
-      <md-input-container>
-        <form onSubmit="console.log(document.getElementById('input1').value)">
-          <input type="submit" name="bet" aria-label="red"  value="Submit" ng-model="color.red" aria-label="red">
+    <div class="chat">
+    <div class="chatBar">Chat Room</div>
+      <div class="chatBox" scroll-bottom="messages">
+        <div ng-repeat="message in messages track by $index">
+          <div class="chatMessage">
+            <div class="messageTextInMessage">{{ message }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="submitForm">
+        <form ng-submit="submit()">
+          <input type="text" ng-model="text" name="text" placeholder="Enter text" />
         </form>
-      </md-input-container>
-    </md-slider-container>
+      </div>
     </div>
+
+    <div class="roundCounter">
+    <div class="p1Score">
+      <table>
+      <th>
+        <tr>
+          <td ng-repeat="scores in p1Scores track by $index">{{ scores }}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="scoreBar"></div>
+    <div class="p2Score">
+      <table>
+        <tr>
+          <td ng-repeat="scores in p2Scores track by $index">{{ scores }}</td>
+        </tr>
+      </table>
+    </div>
+    
+    </div>
+  </div>
 
   </body>
 

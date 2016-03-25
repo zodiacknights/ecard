@@ -2,7 +2,13 @@ h3.title {
   width: 1px;
 }
 
-.Citizen{
+td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  width: 20px;
+  text-align: center;
+}
+/*.Citizen{
   float: left;
   height: 270px;
   width: 205px;
@@ -21,9 +27,63 @@ h3.title {
   height: 270px;
   width: 205px;
   background-image: url("../style/Slave.png");
+}*/
+.cards {
+  display: inline-block;
+  vertical-align: top;
+  width: 500px;
+}
+
+.container{
+  padding-top: 50px;
+}
+
+.chat {
+  display: inline-block;
+  padding-top:15px;
+
+}
+.chatBar {
+  border: 1px solid gray;
+  border-bottom-color: transparent;
+  height: 25px;
+  text-align: center;
+  width: 250px;
+}
+
+.chatBox {
+  overflow: auto;
+  width: 250px;
+  height: 300px;
+  border: 1px solid gray;
+}
+
+.chatMessage {
+  padding-left: 5px;
+  background: #ffffff;
+  border-radius: 25px;
+  text-align: left;
+  max-width: 250px;
+}
+
+.roundCounter{
+  height: 60px;
+  width: 350px;
 }
 
 
-.slider{
-  padding-top:400px;
+.roundCounter .scoreBar{
+  background: #ccc;
+  height: 5px;
+  width: 351px;
+}
+
+.submitForm input {
+  border: 1px solid gray;
+  border-top-color: transparent;
+  height: 35px;
+  width: 250px;
+}
+.p2score {
+ padding-top: 6px;
 }
