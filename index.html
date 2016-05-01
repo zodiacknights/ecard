@@ -2,13 +2,24 @@
 <html ng-app="myApp">
   <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.1/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.1/angular-route.min.js"></script>
     <script src="app.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <link rel="stylesheet" href="/style/style.css">   
+    <link rel="stylesheet" href="/style/style.css">
   </head>
   <body ng-controller="ecardController">
+  <div class="jumbotron">
+    <div class="container">
+      <h1>
+        <i class="fa fa-cube" aria-hidden="true"></i>
+        <span>E Card</span>
+      </h1>
+      <p>A simple card game from the Kaiji series.</p>
+      <p>Rules can be found on <a href="http://tobakumokushirokukaiji.wikia.com/wiki/E_Card" target="_blank">this wiki</a>.</p>
+    </div>
+  </div>
   <div class="container">
     <div class="cards">
       <h3>P1</h3>
@@ -24,39 +35,42 @@
       </div>
     </div>
     <div class="chat">
-    <div class="chatBar">Chat Room</div>
+      <div class="chatBar">
+        <i class="fa fa-comments chatBarIcon" aria-hidden="true"></i>
+        <span>Chat Room</span>
+      </div>
       <div class="chatBox" scroll-bottom="messages">
         <div ng-repeat="message in messages track by $index">
           <div class="chatMessage">
-            <div class="messageTextInMessage">{{ message }}</div>
+            <div class="messageTextInMessage"><i class="fa" ng-class="messageIcon(message)" aria-hidden="true"></i>
+{{ message }}</div>
           </div>
         </div>
       </div>
       <div class="submitForm">
         <form ng-submit="submit()">
-          <input type="text" ng-model="text" name="text" placeholder="Enter text" />
+          <input type="text" ng-model="text" name="text" placeholder="Chat with opponent" />
         </form>
       </div>
     </div>
-
     <div class="roundCounter">
-    <div class="p1Score">
-      <table>
-      <th>
-        <tr>
-          <td ng-repeat="scores in p1Scores track by $index">{{ scores }}</td>
-        </tr>
-      </table>
-    </div>
-    <div class="scoreBar"></div>
-    <div class="p2Score">
-      <table>
-        <tr>
-          <td ng-repeat="scores in p2Scores track by $index">{{ scores }}</td>
-        </tr>
-      </table>
-    </div>
-    
+      <i class="fa fa-pencil" aria-hidden="true"></i>
+      <span>Current Score</span>
+      <div class="p1Score">
+        <table>
+          <tr>
+            <td ng-repeat="scores in p1Scores track by $index">{{ scores }}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="scoreBar"></div>
+      <div class="p2Score">
+        <table>
+          <tr>
+            <td ng-repeat="scores in p2Scores track by $index">{{ scores }}</td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
 
