@@ -10,7 +10,7 @@ angular.module('myApp', [])
     $scope.text = '';
     $scope.p1Scores= [ "-", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "];
     $scope.p2Scores= [ "-", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "];
- 
+
     $scope.init = function(){
       $scope.$applyAsync(function(){
         $scope.playOneCards = [{card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Citizen'}, {card: 'Emperor'}, {hide: false}];
@@ -94,7 +94,7 @@ angular.module('myApp', [])
 
     $scope.twoClicked = function(pTwo, index){
       if (whichPlayer === 2 && playedACard === false){
-        playedACard = true;      	
+        playedACard = true;
         pTwo.hide = true;
         $scope.send(index);
       }
@@ -143,10 +143,10 @@ angular.module('myApp', [])
       }
       else if (winner === 'Player Two wins'){
         $scope.gamePlay.twoScore++;
-        $scope.p1Scores[$scope.gamePlay.round - 1] = "L"; 
-        $scope.p2Scores[$scope.gamePlay.round - 1] = "W";       
+        $scope.p1Scores[$scope.gamePlay.round - 1] = "L";
+        $scope.p2Scores[$scope.gamePlay.round - 1] = "W";
       }
-      
+
       $scope.p1Scores[$scope.gamePlay.round] = "-";
       $scope.p2Scores[$scope.gamePlay.round] = "-";
       $scope.gamePlay.round++;
@@ -169,7 +169,7 @@ angular.module('myApp', [])
       if (player === 'one' && element === 4){
         if (!$scope.swapped){
           return 'Emperor';
-        } 
+        }
         else {
           return 'Slave';
         }
@@ -184,7 +184,7 @@ angular.module('myApp', [])
       }
     };
 
-    
+
     $scope.submit = function(){
       if ($scope.text) {
         socket.emit('chat', {msg: this.text, player: whichPlayer});
@@ -193,8 +193,12 @@ angular.module('myApp', [])
     };
 
     socket.on('chat', function(data){
-      $scope.messages.push("Player " + data.player + ": " + data.msg);
+      $scope.messages.push("Player " + (data.player || 1) + ": " + data.msg);
       $scope.$apply()
     });
+
+    $scope.messageIcon = function(message){
+      return message.indexOf('Player 1') === 0 ? 'fa-comment-o' : 'fa-comment';
+    };
 
 });
